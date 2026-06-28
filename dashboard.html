@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics Dashboard - CivicLens AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <!-- Auth Check: Redirects to login if not logged in -->
+    <script>
+        if (!localStorage.getItem("user")) {
+            window.location.href = "login.html";
+        }
+    </script>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-jakarta antialiased">
+
+    <div class="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
+        <div class="absolute top-[-5%] right-[-5%] w-[40vw] h-[40vw] rounded-full bg-violet-600/5 blur-[120px]"></div>
+        <div class="absolute bottom-[-5%] left-[-5%] w-[40vw] h-[40vw] rounded-full bg-indigo-600/5 blur-[120px]"></div>
+    </div>
+
+    <header class="sticky top-0 z-50 glass-panel border-b border-white/5 backdrop-blur-xl">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <a href="index.html" class="flex items-center">
+    <img src="logo.svg" alt="CivicLens AI Logo" class="h-12 w-auto">
+</a>
+            <nav class="hidden md:flex items-center gap-8">
+                <a href="index.html" class="text-slate-400 hover:text-white font-medium transition duration-200">Home</a>
+                <a href="report.html" class="text-slate-400 hover:text-white font-medium transition duration-200">Report Issue</a>
+                <a href="dashboard.html" class="text-indigo-400 hover:text-indigo-300 font-medium transition duration-200">Dashboard</a>
+            </nav>
+            <div class="flex items-center gap-4">
+
+                <div onclick="toggleProfileModal()" class="flex items-center gap-3 cursor-pointer hover:bg-white/5 p-2 rounded-xl transition duration-200 border border-transparent hover:border-white/10">
+                    <div id="user-avatar" class="h-10 w-10 rounded-full bg-indigo-600 flex items-center justify-center font-bold text-white shadow-md shadow-indigo-600/20">
+                     U
+                    </div>
+                    <div class="hidden sm:block pr-2">
+                        <div id="user-name" class="text-white font-semibold text-sm">
+                            User
+                        </div>
+                        <div class="text-xs text-indigo-400 font-medium">
+                           View Profile
+                        </div>
+                    </div>
+                </div>
+
+                <a href="report.html" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-medium transition duration-200 text-sm shadow-md shadow-indigo-600/10">
+                    Submit Ticket
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl mx-auto px-6 py-8 w-full space-y-6">
+        
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 glass-card p-4">
+            <div>
+                <h1 class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+                    <i class="fa-solid fa-circle-nodes text-indigo-400 text-sm"></i> Command & Dispatch Center
+                </h1>
+                <p class="text-slate-400 text-xs">Real-time infrastructure performance matrix across local zones.</p>
+            </div>
+            
+            <div class="flex flex-wrap items-center gap-2">
+                <button onclick="setCityFilter('Bhubaneswar')" class="city-btn px-4 py-2 rounded-xl text-xs font-semibold border transition" data-city="Bhubaneswar">Bhubaneswar</button>
+                <button onclick="setCityFilter('Cuttack')" class="city-btn px-4 py-2 rounded-xl text-xs font-semibold border transition" data-city="Cuttack">Cuttack</button>
+                <button onclick="setCityFilter('Puri')" class="city-btn px-4 py-2 rounded-xl text-xs font-semibold border transition" data-city="Puri">Puri</button>
+                <button onclick="setCityFilter('Rourkela')" class="city-btn px-4 py-2 rounded-xl text-xs font-semibold border transition" data-city="Rourkela">Rourkela</button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="glass-card p-5 relative overflow-hidden flex items-center justify-between">
+                <div>
+                    <span class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold block mb-1">Total Reports</span>
+                    <h3 id="card-total" class="text-3xl font-extrabold text-white">--</h3>
+                </div>
+                <div class="h-10 w-10 bg-indigo-500/10 text-indigo-400 rounded-lg flex items-center justify-center text-sm">
+                    <i class="fa-solid fa-folder-open"></i>
+                </div>
+            </div>
+            <div class="glass-card p-5 relative overflow-hidden flex items-center justify-between">
+                <div>
+                    <span class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold block mb-1">Resolved Issues</span>
+                    <h3 id="card-resolved" class="text-3xl font-extrabold text-emerald-400">--</h3>
+                </div>
+                <div class="h-10 w-10 bg-emerald-500/10 text-emerald-400 rounded-lg flex items-center justify-center text-sm">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+            </div>
+            <div class="glass-card p-5 relative overflow-hidden flex items-center justify-between">
+                <div>
+                    <span class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold block mb-1">High Priority</span>
+                    <h3 id="card-high" class="text-3xl font-extrabold text-rose-400">--</h3>
+                </div>
+                <div class="h-10 w-10 bg-rose-500/10 text-rose-400 rounded-lg flex items-center justify-center text-sm">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+            </div>
+            <div class="glass-card p-5 relative overflow-hidden flex items-center justify-between">
+                <div>
+                    <span class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold block mb-1">Resolution Rate</span>
+                    <h3 id="card-rate" class="text-3xl font-extrabold text-pink-400">--</h3>
+                </div>
+                <div class="h-10 w-10 bg-pink-500/10 text-pink-400 rounded-lg flex items-center justify-center text-sm">
+                    <i class="fa-solid fa-gauge-high"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-4">
+            <div class="glass-card p-5 border border-rose-500/20">
+                <h3 class="text-sm font-bold text-rose-400 mb-2">🚨 Critical Alert</h3>
+                <div id="critical-alert-content" class="text-xs text-slate-300">Loading...</div>
+            </div>
+            <div class="glass-card p-5 border border-amber-500/20">
+                <h3 class="text-sm font-bold text-amber-400 mb-2">🏆 Most Affected Areas</h3>
+                <div id="affected-areas-content" class="text-xs text-slate-300">Loading...</div>
+            </div>
+            <div class="glass-card p-5 border border-emerald-500/20">
+                <h3 class="text-sm font-bold text-emerald-400 mb-2">📊 City Health Score</h3>
+                <div id="health-score-content" class="text-xs text-slate-300">Loading...</div>
+            </div>
+        </div>
+
+        <div class="grid lg:grid-cols-5 gap-6">
+            <div class="lg:col-span-2 space-y-6">
+                <div class="glass-card p-5 flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-sm font-bold text-white mb-1"><i class="fa-solid fa-satellite-dish text-rose-400 mr-2"></i>AI Hotspot Alert</h3>
+                        <p class="text-[11px] text-slate-400 mb-4">Location mapping shows dense infrastructure alerts in high traffic sectors.</p>
+                    </div>
+
+                    <div class="h-44 w-full bg-slate-950/80 rounded-xl relative border border-white/5 overflow-hidden flex items-center justify-center">
+                        <div class="radar-line"></div>
+                        <div class="absolute inset-0 grid grid-cols-6 grid-rows-4 opacity-10 pointer-events-none">
+                            <div class="border-b border-r border-white"></div><div class="border-b border-r border-white"></div><div class="border-b border-r border-white"></div><div class="border-b border-r border-white"></div><div class="border-b border-r border-white"></div><div class="border-b border-white"></div>
+                            <div class="border-b border-r border-white"></div><div class="border-b border-r border-white"></div><div class="border-b border-r border-white"></div><div class="border-b border-r border-white"></div><div class="border-b border-r border-white"></div><div class="border-b border-white"></div>
+                            <div class="border-b border-r border-white"></div><div class="border-b border-r border-white"></div><div class="border-b border-r border-white"></div><div class="border-b border-r border-white"></div><div class="border-b border-r border-white"></div><div class="border-b border-white"></div>
+                            <div class="border-r border-white"></div><div class="border-r border-white"></div><div class="border-r border-white"></div><div class="border-r border-white"></div><div class="border-r border-white"></div><div></div>
+                        </div>
+                        <div class="absolute h-24 w-24 rounded-full border border-indigo-500/20 flex items-center justify-center">
+                            <div class="h-12 w-12 rounded-full border border-indigo-500/30"></div>
+                        </div>
+                        <div class="absolute h-24 w-24 rounded-full border border-indigo-500/20 flex items-center justify-center">
+                            <div class="h-12 w-12 rounded-full border border-indigo-500/30"></div>
+                        </div>
+                        <div id="radar-container" class="absolute inset-0"></div>
+                        <div class="absolute text-[10px] text-indigo-400 font-mono bottom-2 right-3 flex items-center gap-1.5">
+                            <span class="h-1.5 w-1.5 rounded-full bg-indigo-400 animate-pulse"></span>
+                            SYSTEM OK
+                        </div>
+                        <div class="absolute text-[10px] text-slate-500 font-mono top-2 left-3" id="hotspot-city-label">
+                            SECTOR: BHUBANESWAR
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card p-5">
+                    <h3 class="text-sm font-bold text-white mb-1"><i class="fa-solid fa-arrow-trend-up text-violet-400 mr-2"></i>Trending Issues</h3>
+                    <p class="text-[11px] text-slate-400 mb-4 font-light">Distribution mapping categorized by AI diagnostics classification.</p>
+                    <div class="space-y-3" id="trending-bars-container"></div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-3 space-y-6 flex flex-col justify-between">
+                <div class="glass-card p-5 border border-indigo-500/10 bg-indigo-950/5">
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-sparkles text-indigo-400"></i> AI Strategic Briefing
+                        </h3>
+                        <span class="text-[10px] bg-indigo-500/20 text-indigo-300 font-bold px-2 py-0.5 rounded">LLM Analysis</span>
+                    </div>
+                    <p id="ai-insights-brief" class="text-xs text-slate-300 leading-relaxed font-light">
+                        Extracting local operational reports... Run the platform data loader.
+                    </p>
+                </div>
+
+                <div class="glass-card p-5 flex-grow flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-sm font-bold text-white"><i class="fa-solid fa-table-list text-emerald-400 mr-2"></i>Recent Incidents</h3>
+                            <span class="text-[10px] text-slate-400" id="incidents-count">-- reports</span>
+                        </div>
+                        <div class="overflow-x-auto min-h-[300px]">
+                            <table class="w-full text-left border-collapse text-xs">
+                                <thead>
+                                    <tr class="border-b border-white/5 text-slate-400 uppercase tracking-wider text-[10px]">
+                                        <th class="pb-3 font-semibold">Incident/Title</th>
+                                        <th class="pb-3 font-semibold text-center">Severity</th>
+                                        <th class="pb-3 font-semibold">Routing Agency</th>
+                                        <th class="pb-3 font-semibold text-center">Status</th>
+                                        <th class="pb-3 font-semibold text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="reports-table-body" class="divide-y divide-white/5 text-slate-300"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-card p-6">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-users text-indigo-400"></i>
+                        CivicLens Live Community Feed
+                    </h2>
+                    <p class="text-xs text-slate-400 mt-1">AI Verified • Community Driven • Real-Time Civic Intelligence</p>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-300 text-xs font-bold animate-pulse">LIVE</span>
+            </div>
+            <div id="community-feed" class="space-y-8"></div>
+        </div>
+    </main>
+
+    <div id="profile-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/80 backdrop-blur-md px-4 transition-opacity duration-300">
+        <div class="glass-card w-full max-w-sm p-6 relative border border-white/10 shadow-2xl shadow-indigo-500/20">
+            <button onclick="closeProfileModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white transition">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            
+            <div class="flex flex-col items-center mt-2">
+                <div id="modal-avatar" class="h-24 w-24 rounded-full bg-gradient-to-tr from-indigo-500 to-violet-600 flex items-center justify-center font-bold text-white text-4xl shadow-lg shadow-indigo-500/30 mb-4 border-2 border-slate-900">
+                    U
+                </div>
+                
+                <h2 id="modal-name" class="text-2xl font-bold text-white tracking-tight">User Name</h2>
+                <div class="flex items-center gap-2 mt-1 mb-6">
+                    <span class="px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 text-[10px] font-bold uppercase tracking-wider">Verified Citizen</span>
+                </div>
+                
+                <div class="w-full bg-slate-900/50 rounded-xl p-3 mb-6 border border-white/5 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-envelope text-slate-400 text-sm"></i>
+                    <p id="modal-email" class="text-sm text-slate-300">user@example.com</p>
+                </div>
+
+                <div class="w-full grid grid-cols-2 gap-4 mb-8">
+                    <div class="bg-slate-900/80 border border-white/5 p-4 rounded-xl text-center shadow-inner">
+                        <div class="text-[10px] text-slate-400 uppercase tracking-widest font-semibold mb-1">Contributions</div>
+                        <div id="modal-contributions" class="text-3xl font-extrabold text-indigo-400">0</div>
+                    </div>
+                    <div class="bg-slate-900/80 border border-white/5 p-4 rounded-xl text-center shadow-inner relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-16 h-16 bg-emerald-500/10 rounded-full blur-xl"></div>
+                        <div class="text-[10px] text-slate-400 uppercase tracking-widest font-semibold mb-1 relative z-10">Trust Score</div>
+                        <div id="modal-trust" class="text-3xl font-extrabold text-emerald-400 relative z-10">100%</div>
+                    </div>
+                </div>
+
+                <button onclick="logout()" class="w-full py-3.5 rounded-xl bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 hover:text-rose-300 font-semibold transition duration-200 border border-rose-500/20 flex items-center justify-center gap-2 group">
+                    <i class="fa-solid fa-right-from-bracket group-hover:-translate-x-1 transition-transform"></i> Secure Logout
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="border-t border-white/5 py-8 text-center bg-slate-950/60 backdrop-blur-md mt-12">
+        <p class="text-slate-500 text-sm">&copy; 2026 CivicLens AI. Empowering citizens through AI-driven municipal governance.</p>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase.js"></script>
+    
+    <script src="auth.js"></script>
+    
+    <script src="dashboard.js"></script>
+</body>
+</html>

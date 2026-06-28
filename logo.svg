@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 100" width="100%" height="100%">
+  <defs>
+    <!-- CivicLens AI Gradient -->
+    <linearGradient id="brandGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366f1" /> <!-- indigo-500 -->
+      <stop offset="100%" stop-color="#7c3aed" /> <!-- violet-600 -->
+    </linearGradient>
+    <style>
+      .text-light { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 38px; fill: #f8fafc; }
+      .text-accent { fill: url(#brandGradient); }
+    </style>
+  </defs>
+
+  <!-- Logo Mark: The "AI Lens" -->
+  <g transform="translate(10, 15)">
+    <!-- Glassmorphic backing box -->
+    <rect x="0" y="0" width="70" height="70" rx="20" fill="url(#brandGradient)" opacity="0.15" />
+    <rect x="0" y="0" width="70" height="70" rx="20" fill="none" stroke="url(#brandGradient)" stroke-width="3" />
+    
+    <!-- Camera Aperture Outer Ring -->
+    <circle cx="35" cy="35" r="18" fill="none" stroke="url(#brandGradient)" stroke-width="4" stroke-dasharray="20 5" />
+    
+    <!-- AI Sparkle Center -->
+    <path d="M35 15 C35 25 25 35 15 35 C25 35 35 45 35 55 C35 45 45 35 55 35 C45 35 35 25 35 15 Z" fill="url(#brandGradient)" />
+  </g>
+
+  <!-- Brand Typography -->
+  <text x="95" y="60" class="text-light">
+    CivicLens <tspan class="text-accent">AI</tspan>
+  </text>
+</svg>

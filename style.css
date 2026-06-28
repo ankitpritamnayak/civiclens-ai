@@ -1,0 +1,77 @@
+/* Base styles and fonts customization */
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* Glassmorphism Styles */
+.glass-panel {
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+}
+
+.glass-card {
+    background: rgba(15, 23, 42, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 1rem;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Customized scrollbar design */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, 0.8);
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(99, 102, 241, 0.3);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(99, 102, 241, 0.5);
+}
+
+/* Radar Animation effect */
+.radar-line {
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(from 0deg, rgba(5, 242, 60, 0.15) 0deg, transparent 90deg);
+    animation: radar-sweep 6s linear infinite;
+    transform-origin: center;
+    pointer-events: none;
+    z-index: 1;
+}
+
+@keyframes radar-sweep {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Glow styles */
+.severity-high-glow {
+    box-shadow: 0 0 12px rgba(244, 63, 94, 0.2);
+    border-color: rgba(244, 63, 94, 0.3) !important;
+}
+
+.severity-medium-glow {
+    box-shadow: 0 0 12px rgba(245, 158, 11, 0.15);
+    border-color: rgba(245, 158, 11, 0.2) !important;
+}
+
+.severity-low-glow {
+    box-shadow: 0 0 12px rgba(99, 102, 241, 0.1);
+    border-color: rgba(99, 102, 241, 0.15) !important;
+}
