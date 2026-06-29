@@ -34,6 +34,7 @@ if (removeImgBtn) {
 }
 
 // Primary Submit Action
+// Primary Submit Action
 document.getElementById('issueForm').addEventListener('submit', async function(e) {
     e.preventDefault();
 
@@ -56,35 +57,37 @@ document.getElementById('issueForm').addEventListener('submit', async function(e
         const analysis = await analyzeIssue(titleVal, descVal, selectedBase64Image);
 
         // Smart Severity-Routing Execution
-        // Emergency Track flags Critical or High priority incidents instantly to bypass regular delays
         const isEmergency = (analysis.severity === "Critical" || analysis.severity === "High");
 
-       // 1. Get the currently logged-in user so we know who is making the report
-const { data: { user } } = await supabaseClient.auth.getUser();
+        // 1. Get the currently logged-in user so we know who is making the report
+        const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
 
-// 2. Save generated structure to Database
-const { data, error } = await supabaseClient
-    .from('reports')
-    .insert([
-        {
-            // The 'id' line is completely GONE so Supabase auto-generates it!
-            
-           // profile_id: id, // ADDED: Links the report to the logged-in user
-            
-            // The rest of your exact variables stay exactly the same:
-            title: titleVal,
-            city: cityVal,
-            location: locationVal,
-            description: descVal,
-            image_url: selectedBase64Image,
-            status: "Open",
-            category: analysis.category,
-            severity: analysis.severity,
-            department: analysis.department,
-            recommendation: analysis.recommendation,
-            is_emergency: isEmergency
+        // If nobody is logged in, stop the submission and alert them!
+        if (authError || !user) {
+            alert("Please log in to submit a report.");
+            return; 
         }
-    ]);
+
+        // 2. Save generated structure to Database
+        const { data, error } = await supabaseClient
+            .from('reports')
+            .insert([
+                {
+                    profile_id: user.id, // PERFECTLY UNCOMMENTED AND CORRECT
+                    title: titleVal,
+                    city: cityVal,
+                    location: locationVal,
+                    description: descVal,
+                    image_url: selectedBase64Image,
+                    status: "Open",
+                    category: analysis.category,
+                    severity: analysis.severity,
+                    department: analysis.department,
+                    recommendation: analysis.recommendation,
+                    is_emergency: isEmergency
+                }
+            ]);
+
         if (error) {
             console.error("Supabase Full Error:", JSON.stringify(error, null, 2));
             alert("Supabase Error: " + error.message);
@@ -103,7 +106,6 @@ const { data, error } = await supabaseClient
         btnSpinner.classList.add('hidden');
     }
 });
-
 // Dynamic output render
 function displayAIResults(analysis, isEmergency) {
     document.getElementById('ai-waiting').classList.add('hidden');
