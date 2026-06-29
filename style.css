@@ -74,4 +74,13 @@ body {
 .severity-low-glow {
     box-shadow: 0 0 12px rgba(99, 102, 241, 0.1);
     border-color: rgba(99, 102, 241, 0.15) !important;
+}/* Add this to your main CSS file */
+body, html {
+    height: 100%;
+    overflow-y: auto; /* This forces the scrollbar */
+}
+
+/* If you have a specific container for the form, add this: */
+.your-form-container-class {
+    padding-bottom: 50px; /* Gives the button breathing room at the bottom */
 }
